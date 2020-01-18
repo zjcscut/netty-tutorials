@@ -16,3 +16,8 @@
 
 - Github Page：[《基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇》](http://www.throwable.club/2020/01/16/netty-custom-rpc-framework-client)
 - Coding Page：[《基于Netty和SpringBoot实现一个轻量级RPC框架-Client篇》](http://throwable.coding.me/2020/01/16/netty-custom-rpc-framework-client)
+
+**4. 基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理**
+
+- Github Page：[《基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理》](http://www.throwable.club/2020/01/18/netty-custom-rpc-framework-client-sync)
+- Coding Page：[《基于Netty和SpringBoot实现一个轻量级RPC框架-Client端请求响应同步化处理》](http://throwable.coding.me/2020/01/18/netty-custom-rpc-framework-client-sync)
