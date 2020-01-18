@@ -10,6 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
@@ -22,6 +24,7 @@ import java.util.Optional;
  * @description
  * @since 2020/1/3 20:26
  */
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Component
 @Slf4j
 public class ServerHandler extends SimpleChannelInboundHandler<RequestMessagePacket> {
@@ -68,5 +71,10 @@ public class ServerHandler extends SimpleChannelInboundHandler<RequestMessagePac
         response.setPayload(JSON.toJSONString(result));
         log.info("服务端输出:{}", JSON.toJSONString(response));
         ctx.writeAndFlush(response);
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        log.error("服务端处理异常", cause);
     }
 }

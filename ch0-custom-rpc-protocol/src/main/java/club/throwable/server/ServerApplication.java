@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author throwable
@@ -35,7 +36,7 @@ public class ServerApplication implements CommandLineRunner {
     private Integer nettyPort;
 
     @Autowired
-    private ServerHandler serverHandler;
+    private ApplicationContext applicationContext;
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(ServerApplication.class, args);
@@ -59,7 +60,7 @@ public class ServerApplication implements CommandLineRunner {
                             ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
                             ch.pipeline().addLast(new RequestMessagePacketDecoder());
                             ch.pipeline().addLast(new ResponseMessagePacketEncoder(FastJsonSerializer.X));
-                            ch.pipeline().addLast(serverHandler);
+                            ch.pipeline().addLast(applicationContext.getBean(ServerHandler.class));
                         }
                     });
             ChannelFuture future = bootstrap.bind(port).sync();

@@ -20,4 +20,12 @@ public enum ByteBufferUtils {
         int length = ByteBufUtil.writeUtf8(byteBuf, charSequence);
         byteBuf.setInt(writerIndex, length);
     }
+
+    public byte[] readBytes(ByteBuf byteBuf) {
+        int len = byteBuf.readableBytes();
+        byte[] bytes = new byte[len];
+        byteBuf.readBytes(bytes);
+        byteBuf.release();
+        return bytes;
+    }
 }

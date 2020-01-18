@@ -18,4 +18,6 @@ public class RequestArgumentExtractOutput {
     private String methodName;
 
     private List<String> methodArgumentSignatures;
+
+    private List<Class<?>> methodArgumentTypes;
 }

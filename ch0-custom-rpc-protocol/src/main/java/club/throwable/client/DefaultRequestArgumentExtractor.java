@@ -36,6 +36,7 @@ public class DefaultRequestArgumentExtractor implements RequestArgumentExtractor
             }
             output.setMethodArgumentSignatures(methodArgumentSignatures);
             output.setMethodName(methodName);
+            output.setMethodArgumentTypes(x.parameterTypes);
             return output;
         });
     }
