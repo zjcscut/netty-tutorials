@@ -60,6 +60,13 @@ public class ServerHandler extends SimpleChannelInboundHandler<RequestMessagePac
         ReflectionUtils.makeAccessible(targetMethod);
         // 反射调用
         Object result = targetMethod.invoke(output.getTarget(), convertOutput.getArguments());
+        ResponseMessagePacket response = applyResponseMessagePacket(packet);
+        response.setPayload(result);
+        log.info("服务端输出:{}", JSON.toJSONString(response));
+        ctx.writeAndFlush(response);
+    }
+
+    public static ResponseMessagePacket applyResponseMessagePacket(RequestMessagePacket packet) {
         ResponseMessagePacket response = new ResponseMessagePacket();
         response.setMagicNumber(packet.getMagicNumber());
         response.setVersion(packet.getVersion());
@@ -68,9 +75,7 @@ public class ServerHandler extends SimpleChannelInboundHandler<RequestMessagePac
         response.setMessageType(MessageType.RESPONSE);
         response.setErrorCode(200L);
         response.setMessage("Success");
-        response.setPayload(JSON.toJSONString(result));
-        log.info("服务端输出:{}", JSON.toJSONString(response));
-        ctx.writeAndFlush(response);
+        return response;
     }
 
     @Override

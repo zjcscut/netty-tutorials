@@ -1,6 +1,8 @@
 package club.throwable.client;
 
 import club.throwable.contract.HelloService;
+import club.throwable.contract.dto.SayHelloRequestDTO;
+import club.throwable.contract.dto.SayHelloResponseDTO;
 import club.throwable.protocol.RequestMessagePacketEncoder;
 import club.throwable.protocol.ResponseMessagePacketDecoder;
 import club.throwable.protocol.serialize.FastJsonSerializer;
@@ -55,7 +57,12 @@ public class ClientApplication {
             HelloService helloService = ContractProxyFactory.ofProxy(HelloService.class);
             String name = "throwable";
             String result = helloService.sayHello(name);
-            log.info("HelloService[{}]调用结果:{}", name, result);
+            log.info("HelloService[{}],调用参数:{}, 调用结果:{}", "sayHello(String name)", name, result);
+            SayHelloRequestDTO request = new SayHelloRequestDTO();
+            request.setName("doge");
+            SayHelloResponseDTO responseDTO = helloService.sayHello(request);
+            log.info("HelloService[{}],调用参数:{}, 调用结果:{}", "sayHello(SayHelloRequestDTO request)",
+                    request.toString(), responseDTO.toString());
             future.channel().closeFuture().sync();
         } finally {
             workerGroup.shutdownGracefully();

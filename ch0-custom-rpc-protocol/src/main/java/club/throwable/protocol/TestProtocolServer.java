@@ -1,6 +1,7 @@
 package club.throwable.protocol;
 
 import club.throwable.protocol.serialize.FastJsonSerializer;
+import club.throwable.server.ServerHandler;
 import com.alibaba.fastjson.JSON;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
@@ -41,14 +42,7 @@ public class TestProtocolServer {
                                 @Override
                                 protected void channelRead0(ChannelHandlerContext ctx, RequestMessagePacket packet) throws Exception {
                                     log.info("接收到来自客户端的请求消息,消息内容:{}", JSON.toJSONString(packet));
-                                    ResponseMessagePacket response = new ResponseMessagePacket();
-                                    response.setMagicNumber(packet.getMagicNumber());
-                                    response.setVersion(packet.getVersion());
-                                    response.setSerialNumber(packet.getSerialNumber());
-                                    response.setAttachments(packet.getAttachments());
-                                    response.setMessageType(MessageType.RESPONSE);
-                                    response.setErrorCode(200L);
-                                    response.setMessage("Success");
+                                    ResponseMessagePacket response = ServerHandler.applyResponseMessagePacket(packet);
                                     response.setPayload("{\"name\":\"throwable\"}");
                                     ctx.writeAndFlush(response);
                                 }

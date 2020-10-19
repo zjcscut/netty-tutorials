@@ -1,5 +1,7 @@
 package club.throwable.client;
 
+import club.throwable.contract.dto.SayHelloRequestDTO;
+import club.throwable.contract.dto.SayHelloResponseDTO;
 import club.throwable.exception.SendRequestException;
 import club.throwable.protocol.MessageType;
 import club.throwable.protocol.ProtocolConstant;
@@ -20,6 +22,7 @@ import java.lang.reflect.Proxy;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author throwable
@@ -38,6 +41,11 @@ public class ContractProxyFactory {
     private static final ExecutorService EXECUTOR;
     private static final ScheduledExecutorService CLIENT_HOUSE_KEEPER;
     private static final Serializer SERIALIZER = FastJsonSerializer.X;
+
+    /**
+     * 线程数计数器
+     */
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
 
     @SuppressWarnings("unchecked")
@@ -102,6 +110,17 @@ public class ContractProxyFactory {
         }
     }
 
+    public static void main(String[] args) throws Exception {
+        SayHelloResponseDTO r = new SayHelloResponseDTO();
+        r.setContent("doge say hello!");
+        byte[] encode = SERIALIZER.encode(r);
+        String x = "\"{\\\"content\\\":\\\"doge say hello!\\\"}\"";
+//        String x = "{\"content\":\"doge say hello!\"}";
+        byte[] bytes = x.getBytes();
+        Object decode = SERIALIZER.decode(bytes, SayHelloResponseDTO.class);
+        System.out.println(decode);
+    }
+
     static void scanResponseFutureTable() {
         log.info("开始执行ResponseFutureTable清理任务......");
         Iterator<Map.Entry<String, ResponseFuture>> iterator = RESPONSE_FUTURE_TABLE.entrySet().iterator();
@@ -122,13 +141,13 @@ public class ContractProxyFactory {
                 new ArrayBlockingQueue<>(50), runnable -> {
             Thread thread = new Thread(runnable);
             thread.setDaemon(true);
-            thread.setName("CLIENT_REQUEST_EXECUTOR");
+            thread.setName("client-request-executor-" + COUNTER.getAndIncrement());
             return thread;
         });
         CLIENT_HOUSE_KEEPER = new ScheduledThreadPoolExecutor(1, runnable -> {
             Thread thread = new Thread(runnable);
             thread.setDaemon(true);
-            thread.setName("CLIENT_HOUSE_KEEPER");
+            thread.setName("client-house-keeper");
             return thread;
         });
         CLIENT_HOUSE_KEEPER.scheduleWithFixedDelay(ContractProxyFactory::scanResponseFutureTable, 5, 5, TimeUnit.SECONDS);
